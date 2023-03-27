@@ -25,9 +25,15 @@ message RequestPrime {
     int64 number = 1;
 }
 
+message ResponseNumber {
+    int64 number = 1;
+}
+
 service CalculatorService {
     rpc Add(RequestOperand) returns (ResponseResult){}
     rpc Prime(RequestPrime) returns (stream ResponseResult){}
     rpc Average(stream RequestNumber) returns (ResponseDouble){}
+    rpc Max(stream RequestNumber) returns (stream ResponseNumber);
+    rpc Sqrt(RequestNumber) returns (ResponseNumber);
 }
 

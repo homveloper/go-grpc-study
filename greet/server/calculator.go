@@ -6,6 +6,9 @@ import (
 	"log"
 
 	pb "rpc/greet/proto"
+
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func add(rhs, lhs int64) int64 {
@@ -79,4 +82,51 @@ func (s *Server) Average(stream pb.CalculatorService_AverageServer) error {
 	}
 
 	return nil
+}
+
+func (s *Server) Max(stream pb.CalculatorService_MaxServer) error {
+
+	log.Printf("Max called\n")
+
+	var max int64 = 0
+
+	for {
+		req, err := stream.Recv()
+
+		if err == io.EOF {
+			return nil
+			log.Println("Recevied : ", req.Number)
+		}
+
+		if err != nil {
+			log.Fatalf("failed to receive: %v", err)
+			return err
+		}
+
+		if req.Number > max {
+			max = req.Number
+			if err := stream.Send(&pb.ResponseNumber{
+				Number: max,
+			}); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (s *Server) Sqrt(ctx context.Context, req *pb.RequestNumber) (*pb.ResponseNumber, error) {
+
+	log.Printf("Sqrt called : %v\n", req)
+
+	number := req.Number
+
+	if number < 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "Received a negative number: %d", number)
+	}
+
+	return &pb.ResponseNumber{
+		Number: number * number,
+	}, nil
 }
