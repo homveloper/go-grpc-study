@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package = "rpc/greet/proto";
+
+message RequestOperand {
+    int64 lhs = 1;
+    int64 rhs = 2;
+} 
+
+message RequestNumber {
+    int64 number = 1;
+}
+
+message ResponseResult {
+    int64 result = 1;
+}
+
+message ResponseDouble {
+    double result = 1;
+}
+
+message RequestPrime {
+    int64 number = 1;
+}
+
+service CalculatorService {
+    rpc Add(RequestOperand) returns (ResponseResult){}
+    rpc Prime(RequestPrime) returns (stream ResponseResult){}
+    rpc Average(stream RequestNumber) returns (ResponseDouble){}
+}
+

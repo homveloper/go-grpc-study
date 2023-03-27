@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package greet;
+
+option go_package = "rpc/greet/proto";
+
+message RequestGreet {
+    string first_name = 1;
+}
+
+message ResponseGreet {
+    string result = 1;
+}
+
+service GreetService {
+    rpc Greet(RequestGreet) returns (ResponseGreet);
+    rpc GreetManyTimes(RequestGreet) returns (stream ResponseGreet);
+    rpc LongGreet(stream RequestGreet) returns (ResponseGreet);
+    rpc GreetEveryone(stream RequestGreet) returns (stream ResponseGreet);
+}
